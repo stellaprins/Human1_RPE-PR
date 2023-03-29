@@ -14,8 +14,7 @@ def FVA_FBA_analysis(model,DM_atp_c__PR_rxn_id):
     df_pFBA_fluxes = pd.DataFrame()
     df_pFBA_costs = pd.DataFrame()
     
-    #RPE_ATP = [0, 20, 40, 60, 80]
-    RPE_ATP = [0]
+    RPE_ATP = [0, 20, 40, 60, 80]
 
     for x in RPE_ATP:
         model.reactions.get_by_id(DM_atp_c__PR_rxn_id).bounds=(x,x) # set bounds
