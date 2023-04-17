@@ -14,7 +14,7 @@ def FVA_FBA_analysis(model,DM_atp_c__PR_rxn_id):
     df_pFBA_fluxes = pd.DataFrame()
     df_pFBA_costs = pd.DataFrame()
     
-    RPE_ATP = [0, 20, 40, 60, 80]
+    RPE_ATP = [0, 40, 80]
 
     for x in RPE_ATP:
         model.reactions.get_by_id(DM_atp_c__PR_rxn_id).bounds=(x,x) # set bounds
@@ -27,17 +27,16 @@ def FVA_FBA_analysis(model,DM_atp_c__PR_rxn_id):
         except:
             pass
         
-        try:
-            fva_full = flux_variability_analysis(model, loopless=False) # FVA 
-            fva_full.columns = fva_full.columns + '_' + str(x) # add RPE_ATP to FVA column names
-            df_FVA_full = pd.concat([df_FVA_full, fva_full], axis=1) # fill df FVA results
-        except:
-            pass
-
-        df_l = [df_FVA_full, df_FBA_fluxes, df_FBA_costs]
+        #try:
+            #fva_full = flux_variability_analysis(model, loopless=False) # FVA 
+            #fva_full.columns = fva_full.columns + '_' + str(x) # add RPE_ATP to FVA column names
+            #df_FVA_full = pd.concat([df_FVA_full, fva_full], axis=1) # fill df FVA results
+        #except:
+           # pass
+        df_l = [df_FVA_full, df_FBA_fluxes]
+        # df_l = [df_FVA_full, df_FBA_fluxes, df_FBA_costs]
         #df_results = rxns
         df_results = pd.DataFrame()
-    for df in df_l:
         df_results = pd.concat(df_l, axis=1) 
     # fix column order
     min_max_flux = [i for i in list(df_results.columns) if 'min' in i] + \
@@ -65,4 +64,10 @@ def results_to_excel(df, path):
     with pd.ExcelWriter(path) as writer:
         df.to_excel(writer, sheet_name='full')
         df[df['subsystem'] == 'Exchange/demand reactions'].to_excel(writer, sheet_name='Exchange/demand reactions')
-        
+
+def create_permutation_dicts(rxn_id_bounds_dict):
+    import itertools
+    keys, values = zip(*rxn_id_bounds_dict.items())
+    permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
+    return permutations_dicts
+

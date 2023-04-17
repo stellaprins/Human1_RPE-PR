@@ -20,13 +20,12 @@ def make_rxn_df(model):
     # make df with rxns in model
     l = [list(r.annotation.keys()) for r in  model.reactions]
     annotation_keys = list(set([item for sublist in l for item in sublist]))
-    rxns = pd.DataFrame([[r.id,r.id.split('_')[1].replace('eRPE','RPE_PR_interface'),\
+    rxns = pd.DataFrame([[r.id,get_cell_rxn(r),\
                           r.lower_bound,r.upper_bound]+get_annotation_ids(r,annotation_keys)+\
-                     [r.name,r.subsystem,r.compartments,add_compartment2rxn(r),\
-                      r.reaction,r.build_reaction_string(use_metabolite_names = True),r.gpr]\
+                         [r.name,r.subsystem,add_compartment2rxn(r),r.reaction,r.gpr]\
                       for r in model.reactions],index=[r.id for r in model.reactions],\
-                    columns=['rxn_ID','cell','lb','ub',]+annotation_keys+\
-                    ['name','subsystem','compartments','reaction','reaction (IDs)','reaction (names)','GPR']) 
+                        columns=['rxn_ID','cell','lb','ub']+annotation_keys+\
+                        ['name','subsystem','reaction','met_IDs','GPR']) 
     return rxns
 
 
@@ -35,6 +34,27 @@ def get_vmh_id(reaction):
     if 'vmhreaction' in reaction.annotation.keys(): 
         vmh_id = reaction.annotation['vmhreaction']
     return  vmh_id
+
+def get_cell_rxn(r):
+    import numpy as np
+    m1 = r.id.endswith('_RPE')
+    m2 = r.id.endswith('_PR')
+    m3 = r.id.endswith('_RPE_PR')
+    m4 = r.id.endswith('_PR_RPE')
+    m5 = r.id.endswith('_eRPE_PR')
+    cell = np.select([m1, m2, m3, m4, m5], ['RPE','PR','RPE_PR','PR_RPE','RPE_PR_IF'], default=None)
+    return str(cell)
+
+def get_cell(model):
+    import numpy as np
+    m1 = [r.id.endswith('_RPE')  for r in  model.reactions]
+    m2 = [r.id.endswith('_PR')  for r in  model.reactions]
+    m3 = [r.id.endswith('_RPE_PR')  for r in  model.reactions]
+    m4 = [r.id.endswith('_PR_RPE')  for r in  model.reactions]
+    m5 = [r.id.endswith('_eRPE_PR')  for r in  model.reactions]
+    cell_l = list(np.select([m1, m2, m3, m4, m5], ['RPE','PR','RPE_PR','PR_RPE','RPE_PR_IF'], default=None))
+    return cell_l
+
     
 # df= pd.DataFrame([[get_vmh_id(r),r.name,r.subsystem,r.reaction,r.build_reaction_string(use_metabolite_names = True)] \
 #              for r in mod_RPE_PR.reactions],\

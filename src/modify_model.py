@@ -1,4 +1,4 @@
-def add_all_EX_rxns(basis_model,model):
+def add_all_EX_rxns(basis_model, model):
     EX_rxns = [r for r in basis_model.reactions if len(r.products)==0]
     EX_rxns_model = [r.id for r in model.reactions if len(r.products)==0]
     missing_rxns = [r.copy() for r in EX_rxns if r.id not in EX_rxns_model]
@@ -29,6 +29,7 @@ def add_rxns2groups(model):
     return model
 
 def add_id_suffix(model, suffix):
+    # to rxns and mets
     for r in model.reactions:
         r.id = r.id + suffix
     for m in model.metabolites:
@@ -43,9 +44,36 @@ def close_PR_EX(model):
         r.bounds=(0,0)
     return model
 
+def close_EX(model):
+    # close all exchange reactions  
+    rxns = [r for r in model.reactions if len(r.products) == 0]
+    for r in rxns:
+        r.bounds=(0,0)
+    return model
+
 def open_RPE_EX_ub(model):
     # open RPE exchange reactions upper boundaries (allowing things to move out of the system) 
     rxns = [r for r in model.reactions if '_RPE' in r.id if len(r.products) == 0]
     for r in rxns:
         r.bounds=(0,1000)
     return model
+
+def open_PR_EX(model,lb,ub):
+    # close PR exchange reactions  
+    rxns = [r for r in model.reactions if '_PR' in r.id if len(r.products) == 0]
+    for r in rxns:
+        r.bounds=(lb,ub)
+    return model
+
+def create_permutation_dicts(rxn_id_bounds_dict):
+    import itertools
+    keys, values = zip(*rxn_id_bounds_dict.items())
+    permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
+    return permutations_dicts
+
+def change_bounds(model,rxn_bounds_dict):  
+    for d in dictionaries:
+        for k in d:
+            model.reactions.get_by_id(k).bounds = d[k]
+    return model
+
