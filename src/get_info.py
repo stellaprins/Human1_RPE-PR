@@ -20,12 +20,26 @@ def make_rxn_df(model):
     # make df with rxns in model
     l = [list(r.annotation.keys()) for r in  model.reactions]
     annotation_keys = list(set([item for sublist in l for item in sublist]))
-    rxns = pd.DataFrame([[r.id,get_cell_rxn(r),\
+    rxns = pd.DataFrame([[get_cell_rxn(r),\
                           r.lower_bound,r.upper_bound]+get_annotation_ids(r,annotation_keys)+\
                          [r.name,r.subsystem,add_compartment2rxn(r),r.reaction,r.gpr]\
                       for r in model.reactions],index=[r.id for r in model.reactions],\
-                        columns=['rxn_ID','cell','lb','ub']+annotation_keys+\
+                        columns=['cell','lb','ub']+annotation_keys+\
                         ['name','subsystem','reaction','met_IDs','GPR']) 
+    return rxns
+
+
+
+# make RXN df 
+def make_compact_rxn_df(model):
+    import pandas as pd
+    # make df with rxns in model
+    l = [list(r.annotation.keys()) for r in  model.reactions]
+    annotation_keys = list(set([item for sublist in l for item in sublist]))
+    rxns = pd.DataFrame([[r.id,get_cell_rxn(r),r.lower_bound,r.upper_bound,\
+                         r.name,r.subsystem,add_compartment2rxn(r)]\
+                      for r in model.reactions],index=[r.id for r in model.reactions],\
+                        columns=['rxn_ID','cell','lb','ub','name','subsystem','reaction']) 
     return rxns
 
 
