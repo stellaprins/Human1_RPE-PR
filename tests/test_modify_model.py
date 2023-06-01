@@ -4,7 +4,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0,'.')
 os.chdir('.') 
-from src.modify_model import add_all_EX_rxns, remove_compartment, fix_compartment_dict, add_id_suffix, close_PR_EX, close_EX
+from src.modify_model import add_all_EX_rxns, remove_compartment, fix_compartment_dict, add_id_suffix, close_PR_EX, close_EX, create_permutation_dicts
 from cobra.io import read_sbml_model
 
 @pytest.fixture
@@ -74,7 +74,7 @@ def test_close_PR_EX_PR(model):
     assert EX_PR_bounds_zero or EX_PR_bounds_nonexistent == True
     
 # close_EX()  
-def close_EX(model):
+def test_close_EX(model):
     # open all reactions
     for r in model.reactions:
         r.bounds=(-1000,1000)
@@ -82,3 +82,7 @@ def close_EX(model):
     model = close_EX(model)
     assert set([r.bounds for r in model.reactions if len(r.products) == 0]) == {(0,0)}
 
+def test_create_permutation_dicts_N(rxn_id_bounds_dict):
+    test_dict = {'met1':[1,2], 'met2':[1,2,3,4], 'met3':[1,2,3,4,5,6]}
+    test_perm_dict = create_permutation_dicts(test_dict)
+    assert len(test_perm_dict) == 2*4*6
