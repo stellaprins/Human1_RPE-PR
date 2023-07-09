@@ -1,5 +1,7 @@
 ~$*
 .DS_Store
-.ipynb_checkpoints
 
+# ignore results folder
 results
+# ignore any folder named `.ipynb_checkpoints` anywhere in the repo
+**/.ipynb_checkpoints
