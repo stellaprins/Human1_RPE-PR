@@ -32,7 +32,7 @@ def get_annotation_ids(x, annotation_keys):
     return annotation
 
 def add_compartment2rxn(r):
-    """"
+    """
     A function to add the compartment to a reaction.
     
     Parameters
@@ -44,15 +44,16 @@ def add_compartment2rxn(r):
     -------
     rxn : str
         A reaction string with the compartment added to the metabolite IDs
-    
 
-    """"
+    """
+
     met_list = [m.id for m in r.model.metabolites]
     rxn = " ".join([r.model.metabolites.get_by_id(x).name+'['+r.model.metabolites.get_by_id(x).compartment+']'\
     if x in met_list else x for x in r.reaction.split()])
     return rxn
 
 # make RXN df 
+
 def make_rxn_df(model):
     """
     A function to make a dataframe with the reactions in a model.
@@ -77,8 +78,8 @@ def make_rxn_df(model):
         'reaction (IDs)' : reaction string with metabolite IDs
         'reaction (names)' : reaction string with metabolite names
         'GPR' : gene-protein-reaction rule
-    
     """
+
     import pandas as pd
     # make df with rxns in model
     l = [list(r.annotation.keys()) for r in  model.reactions]
@@ -115,8 +116,9 @@ def make_compact_rxn_df(model):
         'subsystem' : reaction subsystem
         'compartments' : compartments the reaction is in
         'reaction' : reaction string with metabolite IDs
-
     """
+
+
     import pandas as pd
     # make df with rxns in model
     l = [list(r.annotation.keys()) for r in  model.reactions]
@@ -129,12 +131,42 @@ def make_compact_rxn_df(model):
 
 
 def get_vmh_id(reaction):
+    """
+    
+    A function to get the VMH ID of a reaction.
+
+    Parameters
+    ----------
+    reaction : cobra.core.Reaction
+
+    Returns
+    -------
+    vmh_id : str
+        The VMH ID of the reaction
+
+
+    """
     vmh_id = ''
     if 'vmhreaction' in reaction.annotation.keys(): 
         vmh_id = reaction.annotation['vmhreaction']
     return  vmh_id
 
 def get_cell_rxn(r):
+
+    """
+
+    A function to get the cell compartment of a reaction.
+
+    Parameters
+    ----------
+    r : cobra.core.Reaction
+
+    Returns
+    -------
+    cell : str
+        The cell compartment of the reaction
+    """
+
     import numpy as np
     m1 = r.id.endswith('_RPE')
     m2 = r.id.endswith('_PR')
@@ -145,6 +177,19 @@ def get_cell_rxn(r):
     return str(cell)
 
 def get_cell(model):
+    """
+    A function to get the cell compartment of a reaction.
+
+    Parameters
+    ----------
+    model : cobra.core.Model
+
+    Returns
+    -------
+    cell_l : list
+        A list of cell compartments of the reactions in the model
+    """ 
+
     import numpy as np
     m1 = [r.id.endswith('_RPE')  for r in  model.reactions]
     m2 = [r.id.endswith('_PR')  for r in  model.reactions]
@@ -156,7 +201,7 @@ def get_cell(model):
 
 # make RXN df 
 def RPE_PR_rxn_df(model):
-    """"    
+    """    
     A function to make a dataframe with the reactions in the RPE_PR model.
 
     Parameters
