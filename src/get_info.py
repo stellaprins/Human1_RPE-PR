@@ -1,5 +1,28 @@
 # functions for MAKE DF WITH MET / RXN INFO TO ADD FBA RESULTS TO
 def get_annotation_ids(x, annotation_keys):
+    """"
+    A function to get the annotation IDs of a reaction or metabolite.
+
+    Parameters
+    ----------
+    x : cobra.core.Reaction or cobra.core.Metabolite
+        A reaction or metabolite
+    annotation_keys : list
+        A list of annotation keys
+
+    Returns
+    -------
+    annotation : list
+        A list of annotation IDs
+
+    Examples
+    --------
+    >>> import cobra
+    >>> from src.get_info import get_annotation_ids
+    >>> mod = cobra.io.read_sbml_model('models/Human1.xml')
+    >>> get_annotation_ids(mod.reactions.get_by_id('EX_glc__D_e'), ['bigg.reaction', 'rhea', 'kegg.reaction', 'metanetx.reaction', 'sabiork.reaction', 'seed.reaction', 'biocyc'])
+
+    """
     annotation = []
     for k in annotation_keys:
         if k in x.annotation.keys():
@@ -9,6 +32,21 @@ def get_annotation_ids(x, annotation_keys):
     return annotation
 
 def add_compartment2rxn(r):
+    """"
+    A function to add the compartment to a reaction.
+    
+    Parameters
+    ----------
+    r : cobra.core.Reaction
+        A reaction
+
+    Returns
+    -------
+    rxn : str
+        A reaction string with the compartment added to the metabolite IDs
+    
+
+    """"
     met_list = [m.id for m in r.model.metabolites]
     rxn = " ".join([r.model.metabolites.get_by_id(x).name+'['+r.model.metabolites.get_by_id(x).compartment+']'\
     if x in met_list else x for x in r.reaction.split()])
@@ -16,6 +54,31 @@ def add_compartment2rxn(r):
 
 # make RXN df 
 def make_rxn_df(model):
+    """
+    A function to make a dataframe with the reactions in a model.
+    
+    Parameters
+    ----------
+    model : cobra.core.Model
+        A model
+    
+    Returns
+    -------
+    rxns : pandas.core.frame.DataFrame
+        A dataframe with the reactions in the model
+        the dataframe has the following columns:
+        'cell' : cell compartment
+        'lb' : lower bound
+        'ub' : upper bound
+        'name' : reaction name
+        'subsystem' : reaction subsystem
+        'compartments' : compartments the reaction is in
+        'reaction' : reaction string with metabolite IDs
+        'reaction (IDs)' : reaction string with metabolite IDs
+        'reaction (names)' : reaction string with metabolite names
+        'GPR' : gene-protein-reaction rule
+    
+    """
     import pandas as pd
     # make df with rxns in model
     l = [list(r.annotation.keys()) for r in  model.reactions]
@@ -28,10 +91,32 @@ def make_rxn_df(model):
                         ['name','subsystem','reaction','met_IDs','GPR']) 
     return rxns
 
-
-
 # make RXN df 
 def make_compact_rxn_df(model):
+
+    """
+    A function to make a dataframe with the reactions in a model.
+
+    Parameters
+    ----------
+    model : cobra.core.Model
+        A model
+    
+    Returns
+    -------
+    rxns : pandas.core.frame.DataFrame  
+        A dataframe with the reactions in the model
+        the dataframe has the following columns:
+        'rxn_ID' : reaction ID
+        'cell' : cell compartment
+        'lb' : lower bound
+        'ub' : upper bound
+        'name' : reaction name
+        'subsystem' : reaction subsystem
+        'compartments' : compartments the reaction is in
+        'reaction' : reaction string with metabolite IDs
+
+    """
     import pandas as pd
     # make df with rxns in model
     l = [list(r.annotation.keys()) for r in  model.reactions]
@@ -69,7 +154,54 @@ def get_cell(model):
     cell_l = list(np.select([m1, m2, m3, m4, m5], ['RPE','PR','RPE_PR','PR_RPE','RPE_PR_IF'], default=None))
     return cell_l
 
+# make RXN df 
+def RPE_PR_rxn_df(model):
+    """"    
+    A function to make a dataframe with the reactions in the RPE_PR model.
+
+    Parameters
+    ----------
+    model : cobra.core.Model
+        RPE_PR model
+        
+    Returns
+    ------- 
+    rxns : pandas.core.frame.DataFrame
+        A dataframe with the reactions in the RPE_PR model
+        the dataframe has the following columns:
+        'Human1.reaction' : reaction ID
+        'cell' : cell compartment
+        'lb' : lower bound
+        'ub' : upper bound
+        'name' : reaction name
+        'subsystem' : reaction subsystem
+        'compartments' : compartments the reaction is in
+        'reaction' : reaction string with metabolite IDs
+        'reaction (IDs)' : reaction string with metabolite IDs
+        'reaction (names)' : reaction string with metabolite names
+        'GPR' : gene-protein-reaction rule
     
+    Examples
+    --------
+    >>> import cobra
+    >>> from src.combine_RPE_PR import RPE_PR_rxn_df
+    >>> mod_RPE_PR = cobra.io.read_sbml_model('models/Human1_RPE_PR.xml')
+    >>> rxns = RPE_PR_rxn_df(mod_RPE_PR)
+    >>> rxns
+    
+    """
+    import pandas as pd
+    # make df with rxns in model
+    l = [list(r.annotation.keys()) for r in  model.reactions]
+    annotation_keys = list(set([item for sublist in l for item in sublist]))
+    rxns = pd.DataFrame([[r.id,r.id.split('_')[1].replace('eRPE','RPE_PR_interface'),\
+                          r.lower_bound,r.upper_bound]+get_annotation_ids(r,annotation_keys)+\
+                     [r.name,r.subsystem,r.compartments,add_compartment2rxn(r),\
+                      r.reaction,r.build_reaction_string(use_metabolite_names = True),r.gpr]\
+                      for r in model.reactions],index=[r.id for r in model.reactions],\
+                    columns=['Human1.reaction','cell','lb','ub',]+annotation_keys+\
+                    ['name','subsystem','compartments','reaction','reaction (IDs)','reaction (names)','GPR']) 
+    return rxns
 # df= pd.DataFrame([[get_vmh_id(r),r.name,r.subsystem,r.reaction,r.build_reaction_string(use_metabolite_names = True)] \
 #              for r in mod_RPE_PR.reactions],\
 #                 index = [r.id  for r in mod_RPE_PR.reactions],
