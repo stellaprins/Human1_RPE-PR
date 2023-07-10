@@ -87,3 +87,6 @@ def test_create_permutation_dicts_N():
     test_perm_dict = create_permutation_dicts(test_dict)
     assert len(test_perm_dict) == 2*4*6
     
+def test_change_bounds_new_bounds(model):
+    model_new = change_bounds(model,{model.reactions[0].id:(-666,666)})
+    assert model_new.reactions[0].bounds == (-666,666)
