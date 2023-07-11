@@ -1,4 +1,15 @@
 def add_all_EX_rxns(basis_model, model):
+    """
+    
+    Parameters
+    ----------
+    basis_model : cobra.core.Model
+        
+
+    model : cobra.core.Model
+
+
+    """
     EX_rxns = [r for r in basis_model.reactions if len(r.products)==0]
     EX_rxns_model = [r.id for r in model.reactions if len(r.products)==0]
     missing_rxns = [r.copy() for r in EX_rxns if r.id not in EX_rxns_model]
