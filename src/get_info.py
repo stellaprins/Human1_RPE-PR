@@ -247,18 +247,29 @@ def RPE_PR_rxn_df(model):
                     columns=['Human1.reaction','cell','lb','ub',]+annotation_keys+\
                     ['name','subsystem','compartments','reaction','reaction (IDs)','reaction (names)','GPR']) 
     return rxns
-# df= pd.DataFrame([[get_vmh_id(r),r.name,r.subsystem,r.reaction,r.build_reaction_string(use_metabolite_names = True)] \
-#              for r in mod_RPE_PR.reactions],\
-#                 index = [r.id  for r in mod_RPE_PR.reactions],
-#             columns=['vmh id', 'name', 'subsystem', 'reaction (id)', 'reaction (name)'])
 
-## match VMH_IDs from bounds file to Human1 IDs to create 'R3D301_EX_rxns_RPE_PR.xlsx'
 
-## import excel file with info on bounds
-#bounds = pd.read_excel(folder / 'rxn_bounds' / 'files PL' / 'R3D301_EX_rxns.xlsx')
+def get_met_names(model,reaction):
+    """
+    get list of metabolite names from reaction id
 
-## vmh_id lookup table + look up RPE rxn
-#df_vmh_id = pd.DataFrame([[get_vmh_id(r),r.id,r.id+'_RPE'] for r in mod.reactions if 'EX_' in get_vmh_id(r)],columns=['vmh_id','human1_id','id'])
-#merged_df = df_vmh_id.merge(bounds, how = 'right', on = ['vmh_id'])
-#merged_df.to_clipboard(excel=True, sep=None)
-#merged_df
+    Parameters
+    ----------
+    model : cobra.Model
+        model to get metabolite names from
+    reaction : str
+        reaction id
+
+    Returns
+    -------
+    met_names : list
+        list of metabolite names
+
+    """
+    met_names = []
+    for m in model.reactions.get_by_id(reaction).reactants:
+        met_names = met_names + [m.name]
+    # if only single metabolite, return string instead of list
+    if len(met_names) == 1:
+        return met_names[0]
+    return met_names
