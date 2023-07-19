@@ -88,3 +88,37 @@ def change_bounds(model,rxn_bounds_dict):
             model.reactions.get_by_id(k).bounds = d[k]
     return model
 
+def set_exchange_bounds(model, ex_dict): 
+    """
+    set bounds for exchange reactions in model based on dict
+    first look for reactions that end with _RPE
+    then look for reactions that end with _PR
+    then look for reactions that end with _eRPE_PR
+    then look for reactions that do not have any of these endings
+
+    Parameters
+    ----------
+    model : cobra.Model
+        model to set bounds for
+    ex_dict : dict
+        dictionary with exchange reaction ids as keys and bounds as values
+
+    Returns
+    -------
+    model : cobra.Model
+        model with updated bounds
+
+    """
+
+    for ex in ex_dict.keys():
+        if ex + '_RPE' in [r.id for r in model.reactions]:
+            model.reactions.get_by_id(ex + '_RPE').bounds = ex_dict[ex] # set bounds for RPE exchange
+        elif ex + '_PR' in [r.id for r in model.reactions]:
+            model.reactions.get_by_id(ex + '_PR').bounds = ex_dict[ex] # if no RPE exchange, set bounds for PR exchange
+        elif ex + '_eRPE_PR' in [r.id for r in model.reactions]:
+            model.reactions.get_by_id(ex + '_eRPE_PR').bounds = ex_dict[ex] # if no RPE or PR exchange, set bounds for eRPE_PR exchange
+        elif ex in [r.id for r in model.reactions]:
+            model.reactions.get_by_id(ex).bounds = ex_dict[ex] # if no RPE, PR, or eRPE_PR exchange, set bounds for exchange (generic)
+        else:  
+            print('no exchange reaction for ' + ex + ' in model: ' + model.id) # if no exchange reaction, print message
+    return model 
