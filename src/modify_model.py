@@ -88,7 +88,7 @@ def change_bounds(model,rxn_bounds_dict):
             model.reactions.get_by_id(k).bounds = d[k]
     return model
 
-def set_exchange_bounds(model, ex_dict): 
+def set_exchange_bounds(model, ex_dict, RPE_PR = 'RPE'): 
     """
     set bounds for exchange reactions in model based on dict
     first look for reactions that end with _RPE
@@ -102,6 +102,9 @@ def set_exchange_bounds(model, ex_dict):
         model to set bounds for
     ex_dict : dict
         dictionary with exchange reaction ids as keys and bounds as values
+    RPE_PR : str, optional
+        string to look for in exchange reaction ids, by default 'RPE'
+        but can be set to 'PR' to open up exchange with PR
 
     Returns
     -------
@@ -109,16 +112,36 @@ def set_exchange_bounds(model, ex_dict):
         model with updated bounds
 
     """
+    if RPE_PR == 'RPE':
+        for ex in ex_dict.keys():
+            if ex + '_RPE' in [r.id for r in model.reactions]:
+                model.reactions.get_by_id(ex + '_RPE').bounds = ex_dict[ex] # set bounds for RPE exchange
+            elif ex + '_PR' in [r.id for r in model.reactions]:
+                print('no RPE exchange for ' + ex + ' in model: ' + model.id + '. PR exchange is opened instead')
+                model.reactions.get_by_id(ex + '_PR').bounds = ex_dict[ex] # if no RPE exchange, set bounds for PR exchange
+            elif ex + '_eRPE_PR' in [r.id for r in model.reactions]:
+                print('no RPE exchange for ' + ex + ' in model: ' + model.id + '. PR exchange is opened instead')
+                model.reactions.get_by_id(ex + '_eRPE_PR').bounds = ex_dict[ex] # if no RPE or PR exchange, set bounds for eRPE_PR exchange
+            elif ex in [r.id for r in model.reactions]:
+                print('no PR or RPE exchange reaction for ' + ex + ' in model: ' + model.id + '. Generic exchange is opened instead.')
+                model.reactions.get_by_id(ex).bounds = ex_dict[ex] # if no RPE, PR, or eRPE_PR exchange, set bounds for exchange (generic)
+            else:  
+                print('no exchange reaction for ' + ex + ' in model: ' + model.id) # if no exchange reaction, print message
 
-    for ex in ex_dict.keys():
-        if ex + '_RPE' in [r.id for r in model.reactions]:
-            model.reactions.get_by_id(ex + '_RPE').bounds = ex_dict[ex] # set bounds for RPE exchange
-        elif ex + '_PR' in [r.id for r in model.reactions]:
-            model.reactions.get_by_id(ex + '_PR').bounds = ex_dict[ex] # if no RPE exchange, set bounds for PR exchange
-        elif ex + '_eRPE_PR' in [r.id for r in model.reactions]:
-            model.reactions.get_by_id(ex + '_eRPE_PR').bounds = ex_dict[ex] # if no RPE or PR exchange, set bounds for eRPE_PR exchange
-        elif ex in [r.id for r in model.reactions]:
-            model.reactions.get_by_id(ex).bounds = ex_dict[ex] # if no RPE, PR, or eRPE_PR exchange, set bounds for exchange (generic)
-        else:  
-            print('no exchange reaction for ' + ex + ' in model: ' + model.id) # if no exchange reaction, print message
+    elif RPE_PR == 'PR':
+        for ex in ex_dict.keys():
+            if ex + '_PR' in [r.id for r in model.reactions]:
+                model.reactions.get_by_id(ex + '_PR').bounds = ex_dict[ex] # set bounds for RPE exchange
+            elif ex + '_eRPE_PR' in [r.id for r in model.reactions]:
+                model.reactions.get_by_id(ex + '_eRPE_PR').bounds = ex_dict[ex] # if no RPE or PR exchange, set bounds for eRPE_PR exchange
+            elif ex + '_RPE' in [r.id for r in model.reactions]:
+                print('no PR exchange reaction for ' + ex + ' in model: ' + model.id + '. RPE exchange is opened instead.') # if no PR exchange reaction, print message
+                model.reactions.get_by_id(ex + '_PR').bounds = ex_dict[ex] # if no RPE exchange, set bounds for PR exchange
+            elif ex in [r.id for r in model.reactions]:
+                print('no PR or RPE exchange reaction for ' + ex + ' in model: ' + model.id + '. Generic exchange is opened instead.')
+                model.reactions.get_by_id(ex).bounds = ex_dict[ex] # if no RPE, PR, or eRPE_PR exchange, set bounds for exchange (generic)
+            else:  
+                print('no exchange reaction for ' + ex + ' in model: ' + model.id) # if no exchange reaction, print message
+    else:
+        print('third input (RPE_PR) must be either "RPE" or "PR"')
     return model 
