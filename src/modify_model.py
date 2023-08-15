@@ -136,7 +136,7 @@ def set_exchange_bounds(model, ex_dict, RPE_PR = 'RPE'):
                 model.reactions.get_by_id(ex + '_eRPE_PR').bounds = ex_dict[ex] # if no RPE or PR exchange, set bounds for eRPE_PR exchange
             elif ex + '_RPE' in [r.id for r in model.reactions]:
                 print('no PR exchange reaction for ' + ex + ' in model: ' + model.id + '. RPE exchange is opened instead.') # if no PR exchange reaction, print message
-                model.reactions.get_by_id(ex + '_PR').bounds = ex_dict[ex] # if no RPE exchange, set bounds for PR exchange
+                model.reactions.get_by_id(ex + '_RPE').bounds = ex_dict[ex] # if no RPE exchange, set bounds for PR exchange
             elif ex in [r.id for r in model.reactions]:
                 print('no PR or RPE exchange reaction for ' + ex + ' in model: ' + model.id + '. Generic exchange is opened instead.')
                 model.reactions.get_by_id(ex).bounds = ex_dict[ex] # if no RPE, PR, or eRPE_PR exchange, set bounds for exchange (generic)
