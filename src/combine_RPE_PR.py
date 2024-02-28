@@ -146,6 +146,7 @@ def add_interface_PR(mod_PR, e_PR):
     
     """
     for rxn in [r for r in mod_PR.reactions if e_PR in r.reaction]:
+        rxn = rxn.copy()
         rxn.id = rxn.id.replace('_PR', '_PR_RPE')
         for p in rxn.products:
             if e_PR in p.id:
@@ -155,6 +156,7 @@ def add_interface_PR(mod_PR, e_PR):
             if e_PR in r.id:
                 r.id = r.id.replace(e_PR,'e_RPE_PR')
                 r.compartment = 'e_RPE_PR'
+        mod_PR.add_reactions([rxn])
     return mod_PR
 
 # fuse RPE and PR model 
@@ -192,6 +194,7 @@ def fuse_RPE_PR(mod_RPE, mod_PR):
     mod_RPE_PR = mod_RPE.copy()
     mod_PR_copy = mod_PR.copy()
     mod_RPE_PR.id = mod_RPE.id + '_' + mod_PR.id
+    mod_RPE_PR.name = mod_RPE.id + '_' + mod_PR.id
     mod_RPE_PR.add_reactions(mod_PR_copy.reactions)
     return mod_RPE_PR
 
