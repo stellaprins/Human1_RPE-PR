@@ -169,3 +169,17 @@ def create_permutation_dicts(rxn_id_bounds_dict):
     permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
     return permutations_dicts
 
+
+import os
+
+def create_folder(*subfolders):
+    # create the base folder
+    base_folder = os.path.expanduser('~')
+    folder_list = [base_folder] + list(subfolders)
+    folder_path = os.path.join(*folder_list)
+
+    # create the folder
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+    return folder_path
+
