@@ -1,12 +1,23 @@
-# ecRPE-PR models
-Adding enzyme-constraints to genome-scale metabolic models (GEMs) of the outer retina 
-
-## Background
-
+# Quick overview
 ### Goal
-Creation of a GEMs of the outer retina (i.e. the RPE and PR layers) that can be used to apply constraint-based reconstruction and analysis (COBRA) methods to investigate hypotheses about eye metabolism. 
+Creation of a Genome-scale metabolic models (GEMs) of the outer retina (i.e. the RPE and PR layers) that can be used to apply constraint-based reconstruction and analysis (COBRA) methods to investigate hypotheses about eye metabolism. 
 
-## Creation of cell-specific GEMs
+### Step 1: Creation of Cell-Specific GEMs
+**make_cs_models.ipynb** Cell-specific models are constructed utilizing CORDA2 for Python within the corda5 environment. 
+
+### Step 2: Creation of Retina Specific Metabolic Models
+**make_RPE-PR_models.ipynb** This involves coupling RPE and rod/cone cell-specific models produced in Step 1 to generate retina-specific metabolic models.
+
+### Step 3: Analysis
+**analysis.ipynb** The third step encompasses the analysis of the models created in the previous steps.
+
+### what you find in the 'models' folder
+- &nbsp;&nbsp; **template model**&nbsp;&nbsp; contains template model (Human1)
+- &nbsp;&nbsp; **cs_mods**&nbsp;&nbsp; contains cell-specific models generated in Step 1
+- &nbsp;&nbsp; **models_outer_retina**&nbsp;&nbsp; contains retina-specific models generated in Step 2
+
+# More information
+## Creation of cell-specific GEMs 
 We created cell-specific models using an implementation of Cost Optimization Reaction Dependency Assessment (CORDA2; Schultz et al., 2017; Schultz & Qutub, 2016) for Python implemented by Christian Diener (https://github.com/resendislab/corda).
 
 **Template model**
@@ -79,6 +90,8 @@ We used Human1 (Robinson et al., 2020) as template model (28-06-2023; https://gi
 
 ![image](https://github.com/stellaprins/ecRPE-PR/assets/30465823/b8a92360-1acf-4b3b-8a0f-a75ed0c04a36)
 
+## Some of the results
+<img src="https://github.com/stellaprins/Human1_RPE-PR/assets/30465823/ed4b882d-65e0-418b-b7e7-f7cf38443ca1" style="width: 90%;" alt="lipids">
 ## References
 Diener, C. (2023, September 1). CORDA for Python. https://github.com/resendislab/corda
 
@@ -93,8 +106,15 @@ Schultz, A., & Qutub, A. A. (2016). Reconstruction of Tissue-Specific Metabolic 
 Voigt, A. P., Mulfaul, K., Mullin, N. K., Flamme-Wiese, M. J., Giacalone, J. C., Stone, E. M., Tucker, B. A., Scheetz, T. E., & Mullins, R. F. (2019). Single-cell transcriptomics of the human retinal pigment epithelium and choroid in health and macular degeneration. Proceedings of the National Academy of Sciences of the United States of America, 116(48), 24100–24107. https://doi.org/10.1073/PNAS.1914143116
 
 ## Contact
-Phil: p.luthert@ucl.ac.uk (Institute of Ophthalmology, University College London, London, UK)
+Get in touch with me if you have any questions or suggestions!
 
-Stella: s.prins@ucl.ac.uk (Institute of Ophthalmology, University College London, London, UK)
+Stella: s.prins@ucl.ac.uk 
+
+Institute of Ophthalmology, University College London, London, UK
+Advanced Research Computing, University College London, London, UK
+
+## This work was funded by Moorfields Eye Charity.
+<p>Consider <a href="https://www.committedgiving.uk.net/moorfieldseyecharity/public/details.aspx?amount=10&freq=MONTHLY">donating</a>.</p>
+<img src="https://github.com/stellaprins/Human1_RPE-PR/assets/30465823/078713bf-e088-4a2f-8f0f-b523a5af93bb" style="width: 35%;" alt="Moorfields Eye Charity logo">
 
 
