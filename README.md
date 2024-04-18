@@ -14,9 +14,31 @@ Creation of a Genome-scale metabolic models (GEMs) of the outer retina (i.e. the
 ### what you find in the 'models' folder
 - &nbsp;&nbsp; **template model**&nbsp;&nbsp; contains template model (Human1)
 - &nbsp;&nbsp; **cs_mods**&nbsp;&nbsp; contains cell-specific models generated in Step 1
-- &nbsp;&nbsp; **models_outer_retina**&nbsp;&nbsp; contains retina-specific models generated in Step 2
+- &nbsp;&nbsp; **models_outer_retina**&nbsp;&nbsp; contains retina-specific models generated in Step 2 and models used to generate them
 
 # More information
+
+## Environments
+
+Before proceeding with the installation, make sure you have an environment management system (like Conda or Pipenv) installed on your system. You can download Conda [here](https://www.anaconda.com/products/individual). These instructions are adaptable for various environment management systems.
+
+### Corda environment to create cell-specific GEMs using CORDA2
+Follow these instructions in the Anaconda prompt to install the required environment to create of Cell-Specific GEMs using CORDA2:
+
+      conda create --name corda
+      
+      pip install corda
+      
+      pip install openpyxl
+
+### RPE-PR environment to create of retina specific metabolic models and perform analysis    
+Follow these steps to install the required environment to couple RPE and PR cells and do the analysis:
+
+      conda create --name RPE-PR
+
+      pip install cobra
+
+
 ## Creation of cell-specific GEMs 
 We created cell-specific models using an implementation of Cost Optimization Reaction Dependency Assessment (CORDA2; Schultz et al., 2017; Schultz & Qutub, 2016) for Python implemented by Christian Diener (https://github.com/resendislab/corda).
 
@@ -111,6 +133,7 @@ Get in touch with me if you have any questions or suggestions!
 Stella: s.prins@ucl.ac.uk 
 
 Institute of Ophthalmology, University College London, London, UK
+
 Advanced Research Computing, University College London, London, UK
 
 ## This work was funded by Moorfields Eye Charity.
