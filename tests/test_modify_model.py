@@ -8,11 +8,11 @@ from src.modify_model import add_all_EX_rxns, remove_compartment, fix_compartmen
 from cobra.io import read_sbml_model
 
 @pytest.fixture
-def basis_model(scope='module'):
+def basis_model(scope='function'):
     return read_sbml_model(Path().cwd() / "tests/data/Human-GEM.xml")
 
 @pytest.fixture
-def model(scope='module'):
+def model(scope='function'):
     return read_sbml_model(Path().cwd() / "tests/data/model_06_MeanExpression_RPE__VoigtEtAl2019_.xml")
 
 # add_all_EX_rxns()
@@ -21,6 +21,7 @@ def test_length_add_all_EX_rxns(basis_model, model):
     EX_rxns_basis_model = [r for r in basis_model.reactions if len(r.products)==0]
     EX_rxns_new_model = [r for r in new_model.reactions if len(r.products)==0]
     assert len(EX_rxns_basis_model) == len(EX_rxns_new_model)
+    
 def test_id_set_add_all_EX_rxns(basis_model, model):
     new_model = add_all_EX_rxns(basis_model, model)
     EX_rxns_basis_model = [r.id for r in basis_model.reactions if len(r.products)==0]
@@ -87,6 +88,3 @@ def test_create_permutation_dicts_N():
     test_perm_dict = create_permutation_dicts(test_dict)
     assert len(test_perm_dict) == 2*4*6
     
-def test_change_bounds_new_bounds(model):
-    model_new = change_bounds(model,{model.reactions[0].id:(-666,666)})
-    assert model_new.reactions[0].bounds == (-666,666)

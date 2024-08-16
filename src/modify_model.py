@@ -4,8 +4,6 @@ def add_all_EX_rxns(basis_model, model):
     Parameters
     ----------
     basis_model : cobra.core.Model
-        
-
     model : cobra.core.Model
 
 
